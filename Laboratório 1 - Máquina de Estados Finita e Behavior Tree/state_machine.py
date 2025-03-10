@@ -105,11 +105,11 @@ class RotateState(State):
         self.angle = random.uniform(-math.pi, math.pi)
 
     def check_transition(self, agent, state_machine):
-        if self.time > self.angle/ANGULAR_SPEED:
+        if self.time > abs(self.angle)/ANGULAR_SPEED:
             state_machine.change_state(MoveForwardState())
     
     def execute(self, agent):
         self.time += SAMPLE_TIME
-        agent.set_velocity(0, ANGULAR_SPEED)
+        agent.set_velocity(0, abs(self.angle)*ANGULAR_SPEED/self.angle)
 
 
