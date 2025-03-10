@@ -183,15 +183,18 @@ class RoombaBehaviorTree(BehaviorTree):
     """
     def __init__(self):
         super().__init__()
-        self.root = SelectorNode
-        self.moving_sequence_node = SequenceNode
-        self.bumper_sequence_node = SequenceNode
+        self.root = SelectorNode("RootSelector")
+        self.moving_sequence_node = SequenceNode("MovingSequence")
+        self.bumper_sequence_node = SequenceNode("BumperSequence")
 
-        self.moving_sequence_node.add_child(MoveForwardNode)
-        self.moving_sequence_node.add_child(MoveInSpiralNode)
+        self.root.add_child(self.moving_sequence_node)
+        self.root.add_child(self.bumper_sequence_node)
 
-        self.bumper_sequence_node.add_child(GoBackNode)
-        self.bumper_sequence_node.add_child(RotateNode)
+        self.moving_sequence_node.add_child(MoveForwardNode())
+        self.moving_sequence_node.add_child(MoveInSpiralNode())
+
+        self.bumper_sequence_node.add_child(GoBackNode())
+        self.bumper_sequence_node.add_child(RotateNode())
 
 
 class MoveForwardNode(LeafNode):
@@ -208,7 +211,7 @@ class MoveForwardNode(LeafNode):
 
         if agent.get_bumper_state():
             return ExecutionStatus.FAILURE
-        elif self.time < MOVE_IN_SPIRAL_TIME:
+        elif self.time < MOVE_FORWARD_TIME:
             agent.set_velocity(FORWARD_SPEED, 0)
             return ExecutionStatus.RUNNING
         else:
@@ -247,9 +250,7 @@ class GoBackNode(LeafNode):
     def execute(self, agent):
         self.time += SAMPLE_TIME
 
-        if agent.get_bumper_state():
-            return ExecutionStatus.FAILURE
-        elif self.time < GO_BACK_TIME:
+        if self.time < GO_BACK_TIME:
             agent.set_velocity(BACKWARD_SPEED, 0)
             return ExecutionStatus.RUNNING
         else:
@@ -258,7 +259,7 @@ class GoBackNode(LeafNode):
 class RotateNode(LeafNode):
     def __init__(self):
         super().__init__("Rotate")
-        self.node_name = "MoveForward"
+        self.node_name = "Rotate"
         self.time = None
         self.angle = None
 
@@ -269,8 +270,8 @@ class RotateNode(LeafNode):
     def execute(self, agent):
         self.time += SAMPLE_TIME
 
-        if self.time < self.angle/ANGULAR_SPEED:
-            agent.set_velocity(0, ANGULAR_SPEED)
+        if self.time < abs(self.angle)/ANGULAR_SPEED:
+            agent.set_velocity(0, abs(self.angle)*ANGULAR_SPEED/self.angle)
             return ExecutionStatus.RUNNING
         else:
             return ExecutionStatus.SUCCESS
