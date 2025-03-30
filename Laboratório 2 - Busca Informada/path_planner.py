@@ -98,6 +98,40 @@ class PathPlanner(object):
 		# The first return is the path as sequence of tuples (as returned by the method construct_path())
 		# The second return is the cost of the path
         self.node_grid.reset()
+
+        start_node = self.node_grid.get_node(start_position[0], start_position[1])
+        goal_node = self.node_grid.get_node(goal_position[0], goal_position[1])
+
+        pq = []
+        node = start_node
+        node.g = 0
+        node.f = node.distance_to(goal_position[0], goal_position[1])
+        heapq.heappush(pq, (node.f, node))
+        while pq:
+            f, node = heapq.heappop(pq)
+            i, j = node.get_position()
+
+            if node.closed:
+                continue
+            node.closed = True
+
+            if (i, j) == goal_position:
+                return self.construct_path(goal_node), node.g
+
+            successor_positions = self.node_grid.get_successors(i, j)
+
+            for successor_position in successor_positions:
+                x, y = successor_position
+                successor = self.node_grid.get_node(x, y)
+
+                if successor.closed:
+                    continue
+
+                if successor.g > node.g + self.cost_map.get_edge_cost((i, j), (x, y)):
+                    successor.g = node.g + self.cost_map.get_edge_cost((i, j), (x, y))
+                    successor.f = successor.distance_to(goal_position[0], goal_position[1])
+                    successor.parent = node
+                    heapq.heappush(pq, (successor.f, successor))
         return [], inf
 
     def a_star(self, start_position, goal_position):

@@ -7,8 +7,8 @@ import random
 import time
 
 # Select planning algorithm
-algorithm = 'dijkstra'
-# algorithm = 'greedy'
+# algorithm = 'dijkstra'
+algorithm = 'greedy'
 # algorithm = 'a_star'
 
 # Number of path plannings used in the Monte Carlo analysis
@@ -18,7 +18,7 @@ num_iterations = 1
 
 # Plot options
 save_fig = True  # if the figure will be used to the hard disk
-show_fig = True  # if the figure will be shown in the screen
+show_fig = False  # if the figure will be shown in the screen
 fig_format = 'png'
 # Recommended figure formats: .eps for Latex/Linux, .svg for MS Office, and .png for easy visualization in Windows.
 # The quality of .eps and .svg is far superior since these are vector graphics formats.
