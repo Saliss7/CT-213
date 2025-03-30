@@ -47,9 +47,39 @@ class PathPlanner(object):
         :return: the path as a sequence of positions and the path cost.
         :rtype: list of tuples and float.
         """
-		# Todo: implement the Dijkstra algorithm
-		# The first return is the path as sequence of tuples (as returned by the method construct_path())
-		# The second return is the cost of the path
+        self.node_grid.reset()
+
+        start_node = self.node_grid.get_node(start_position[0], start_position[1])
+        goal_node = self.node_grid.get_node(goal_position[0], goal_position[1])
+
+        pq = []
+        node = start_node
+        node.f = 0
+        heapq.heappush(pq, (node.f, node))
+        while pq:
+            f, node = heapq.heappop(pq)
+            i, j = node.get_position()
+
+            if node.closed:
+                continue
+            node.closed = True
+
+            if (i, j) == goal_position:
+                return self.construct_path(goal_node), node.f
+
+            successor_positions = self.node_grid.get_successors(i, j)
+
+            for successor_position in successor_positions:
+                x, y = successor_position
+                successor = self.node_grid.get_node(x, y)
+
+                if successor.closed:
+                    continue
+
+                if successor.f > node.f + self.cost_map.get_edge_cost((i, j), (x, y)):
+                    successor.f = node.f + self.cost_map.get_edge_cost((i, j), (x, y))
+                    successor.parent = node
+                    heapq.heappush(pq, (successor.f, successor))
         self.node_grid.reset()
         return [], inf
 
@@ -81,8 +111,8 @@ class PathPlanner(object):
         :return: the path as a sequence of positions and the path cost.
         :rtype: list of tuples and float.
         """
-		# Todo: implement the A* algorithm
-		# The first return is the path as sequence of tuples (as returned by the method construct_path())
-		# The second return is the cost of the path
+        # Todo: implement the A* algorithm
+        # The first return is the path as sequence of tuples (as returned by the method construct_path())
+        # The second return is the cost of the path
         self.node_grid.reset()
         return [], inf
