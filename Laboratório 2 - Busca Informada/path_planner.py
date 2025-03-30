@@ -94,9 +94,7 @@ class PathPlanner(object):
         :return: the path as a sequence of positions and the path cost.
         :rtype: list of tuples and float.
         """
-		# Todo: implement the Greedy Search algorithm
-		# The first return is the path as sequence of tuples (as returned by the method construct_path())
-		# The second return is the cost of the path
+		
         self.node_grid.reset()
 
         start_node = self.node_grid.get_node(start_position[0], start_position[1])
