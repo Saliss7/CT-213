@@ -7,8 +7,8 @@ import random
 import time
 
 # Select planning algorithm
-# algorithm = 'dijkstra'
-algorithm = 'greedy'
+algorithm = 'dijkstra'
+# algorithm = 'greedy'
 # algorithm = 'a_star'
 
 # Number of path plannings used in the Monte Carlo analysis
