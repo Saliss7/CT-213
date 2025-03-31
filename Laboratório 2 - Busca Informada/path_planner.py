@@ -54,6 +54,7 @@ class PathPlanner(object):
 
         pq = []
         node = start_node
+        node.g = 0
         node.f = 0
         heapq.heappush(pq, (node.f, node))
         while pq:
@@ -65,7 +66,7 @@ class PathPlanner(object):
             node.closed = True
 
             if (node_i, node_j) == goal_position:
-                return self.construct_path(goal_node), node.f
+                return self.construct_path(goal_node), node.g
 
             successor_positions = self.node_grid.get_successors(node_i, node_j)
 
@@ -76,11 +77,11 @@ class PathPlanner(object):
                 if successor.closed:
                     continue
 
-                if successor.f > node.f + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j)):
-                    successor.f = node.f + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j))
+                if successor.g > node.g + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j)):
+                    successor.g = node.g + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j))
+                    successor.f = successor.g # in dijkstra f = g, there is no heuristic
                     successor.parent = node
                     heapq.heappush(pq, (successor.f, successor))
-        self.node_grid.reset()
         return [], inf
 
     def greedy(self, start_position, goal_position):
