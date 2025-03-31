@@ -79,7 +79,7 @@ class PathPlanner(object):
 
                 if successor.g > node.g + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j)):
                     successor.g = node.g + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j))
-                    successor.f = successor.g # in dijkstra f = g, there is no heuristic
+                    successor.f = successor.g  # in dijkstra f = g, there is no heuristic
                     successor.parent = node
                     heapq.heappush(pq, (successor.f, successor))
         return [], inf
