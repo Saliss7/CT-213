@@ -40,9 +40,9 @@ class PathPlanner(object):
         """
         Plans a path using the Dijkstra algorithm.
 
-        :param start_position: position where the planning stars as a tuple (x, y).
+        :param start_position: position where the planning stars as a tuple (successor_i, successor_j).
         :type start_position: tuple.
-        :param goal_position: goal position of the planning as a tuple (x, y).
+        :param goal_position: goal position of the planning as a tuple (successor_i, successor_j).
         :type goal_position: tuple.
         :return: the path as a sequence of positions and the path cost.
         :rtype: list of tuples and float.
@@ -58,26 +58,26 @@ class PathPlanner(object):
         heapq.heappush(pq, (node.f, node))
         while pq:
             f, node = heapq.heappop(pq)
-            i, j = node.get_position()
+            node_i, node_j = node.get_position()
 
             if node.closed:
                 continue
             node.closed = True
 
-            if (i, j) == goal_position:
+            if (node_i, node_j) == goal_position:
                 return self.construct_path(goal_node), node.f
 
-            successor_positions = self.node_grid.get_successors(i, j)
+            successor_positions = self.node_grid.get_successors(node_i, node_j)
 
             for successor_position in successor_positions:
-                x, y = successor_position
-                successor = self.node_grid.get_node(x, y)
+                successor_i, successor_j = successor_position
+                successor = self.node_grid.get_node(successor_i, successor_j)
 
                 if successor.closed:
                     continue
 
-                if successor.f > node.f + self.cost_map.get_edge_cost((i, j), (x, y)):
-                    successor.f = node.f + self.cost_map.get_edge_cost((i, j), (x, y))
+                if successor.f > node.f + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j)):
+                    successor.f = node.f + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j))
                     successor.parent = node
                     heapq.heappush(pq, (successor.f, successor))
         self.node_grid.reset()
@@ -87,9 +87,9 @@ class PathPlanner(object):
         """
         Plans a path using greedy search.
 
-        :param start_position: position where the planning stars as a tuple (x, y).
+        :param start_position: position where the planning stars as a tuple (successor_i, successor_j).
         :type start_position: tuple.
-        :param goal_position: goal position of the planning as a tuple (x, y).
+        :param goal_position: goal position of the planning as a tuple (successor_i, successor_j).
         :type goal_position: tuple.
         :return: the path as a sequence of positions and the path cost.
         :rtype: list of tuples and float.
@@ -106,26 +106,26 @@ class PathPlanner(object):
         heapq.heappush(pq, (node.f, node))
         while pq:
             f, node = heapq.heappop(pq)
-            i, j = node.get_position()
+            node_i, node_j = node.get_position()
 
             if node.closed:
                 continue
             node.closed = True
 
-            if (i, j) == goal_position:
+            if (node_i, node_j) == goal_position:
                 return self.construct_path(goal_node), node.g
 
-            successor_positions = self.node_grid.get_successors(i, j)
+            successor_positions = self.node_grid.get_successors(node_i, node_j)
 
             for successor_position in successor_positions:
-                x, y = successor_position
-                successor = self.node_grid.get_node(x, y)
+                successor_i, successor_j = successor_position
+                successor = self.node_grid.get_node(successor_i, successor_j)
 
                 if successor.closed:
                     continue
 
-                if successor.g > node.g + self.cost_map.get_edge_cost((i, j), (x, y)):
-                    successor.g = node.g + self.cost_map.get_edge_cost((i, j), (x, y))
+                if successor.g > node.g + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j)):
+                    successor.g = node.g + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j))
                     successor.f = successor.distance_to(goal_position[0], goal_position[1])
                     successor.parent = node
                     heapq.heappush(pq, (successor.f, successor))
@@ -135,9 +135,9 @@ class PathPlanner(object):
         """
         Plans a path using A*.
 
-        :param start_position: position where the planning stars as a tuple (x, y).
+        :param start_position: position where the planning stars as a tuple (successor_i, successor_j).
         :type start_position: tuple.
-        :param goal_position: goal position of the planning as a tuple (x, y).
+        :param goal_position: goal position of the planning as a tuple (successor_i, successor_j).
         :type goal_position: tuple.
         :return: the path as a sequence of positions and the path cost.
         :rtype: list of tuples and float.
@@ -154,26 +154,26 @@ class PathPlanner(object):
         heapq.heappush(pq, (node.f, node))
         while pq:
             f, node = heapq.heappop(pq)
-            i, j = node.get_position()
+            node_i, node_j = node.get_position()
 
             if node.closed:
                 continue
             node.closed = True
 
-            if (i, j) == goal_position:
+            if (node_i, node_j) == goal_position:
                 return self.construct_path(goal_node), node.g
 
-            successor_positions = self.node_grid.get_successors(i, j)
+            successor_positions = self.node_grid.get_successors(node_i, node_j)
 
             for successor_position in successor_positions:
-                x, y = successor_position
-                successor = self.node_grid.get_node(x, y)
+                successor_i, successor_j = successor_position
+                successor = self.node_grid.get_node(successor_i, successor_j)
 
                 if successor.closed:
                     continue
 
-                if successor.g > node.g + self.cost_map.get_edge_cost((i, j), (x, y)):
-                    successor.g = node.g + self.cost_map.get_edge_cost((i, j), (x, y))
+                if successor.g > node.g + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j)):
+                    successor.g = node.g + self.cost_map.get_edge_cost((node_i, node_j), (successor_i, successor_j))
                     successor.f = successor.g + successor.distance_to(goal_position[0], goal_position[1])
                     successor.parent = node
                     heapq.heappush(pq, (successor.f, successor))
