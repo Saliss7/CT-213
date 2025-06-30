@@ -46,14 +46,16 @@ class DQNAgent:
         :return: action-value neural network.
         :rtype: Keras' model.
         """
-        raise NotImplementedError('You need to implement the neural network model.')  # Remove this line
-        # Todo: Uncomment the lines below
-        # model = models.Sequential()
-        # Todo: implement Keras' model
-        # model.compile(loss=losses.mse,
-        #               optimizer=optimizers.legacy.Adam(lr=self.learning_rate))
-        # model.summary()
-        # return model
+        model = models.Sequential()
+
+        model.add(layers.Dense(24, input_shape=(self.state_size,), activation=activations.relu))
+        model.add(layers.Dense(24, activation=activations.relu))
+        model.add(layers.Dense(self.action_size, activation=activations.linear))
+
+        model.compile(loss=losses.mse,
+                      optimizer=optimizers.legacy.Adam(lr=self.learning_rate))
+        model.summary()
+        return model
 
     def act(self, state):
         """
@@ -64,8 +66,10 @@ class DQNAgent:
         :return: chosen action.
         :rtype: int.
         """
-        # Todo: implement epsilon-greey action selection.
-        return 1  # Todo: change this line
+        if np.random.random() < 1 - self.epsilon:
+            return np.argmax(self.model.predict(state)[0])
+        else:
+            return np.random.choice(range(self.action_size))
 
     def append_experience(self, state, action, reward, next_state, done):
         """
